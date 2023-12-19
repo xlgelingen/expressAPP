@@ -1,3 +1,6 @@
+//在 app.js 中引入 dotenv 配置
+require('dotenv').config(); // 这里
+
 // 各个依赖包
 var createError = require('http-errors');
 var express = require('express');
@@ -12,7 +15,8 @@ var favicon = require('serve-favicon');
 
 // 路由文件引用
 var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+var apiRouter = require('./routes/api');
+
 
 // Express 引用实例化
 var app = express();
@@ -51,7 +55,7 @@ app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 
 // 使用配置好的路由
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use('/api', apiRouter);
 
 // catch 404 and forward to error handler
 // 捕捉404错误
