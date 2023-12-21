@@ -5,6 +5,9 @@ var router = express.Router();
 // 引用书控制器
 var bookController  = require('../controllers/book');
 
+var userController = require('./../controllers/user.js');
+
+
 
 // 设置路由地址, /isbn 代表的意思是如果在浏览器中打开 /api/isbn 地址，将会触发的回调。
 // req 参数存放请求体的内容，例如我们可以在这拿到浏览器发来的各类信息。
@@ -14,4 +17,10 @@ var bookController  = require('../controllers/book');
 /* GET users listing. */
 router.get('/isbn', bookController.info);
 
+// 同一个接口地址，但是不同的请求方法
+router.post('/user', userController.insert);
+router.put('/user', userController.update);
+router.delete('/user', userController.delete);
+
 module.exports = router;
+
