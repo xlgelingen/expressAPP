@@ -17,6 +17,9 @@ var favicon = require('serve-favicon');
 var indexRouter = require('./routes/index');
 var apiRouter = require('./routes/api');
 
+////引入express-session模块
+var session = require('express-session');
+
 
 // Express 引用实例化
 var app = express();
@@ -40,6 +43,7 @@ nunjucks.configure('views', {
 });
 
 
+
 // 使用 morgan 日志打印
 app.use(logger('dev'));
 // 使用对 Post 来的数据 json 格式化
@@ -52,6 +56,13 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 // 设置 favicon.ico 地址
 app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+
+////Use the session middleware
+app.use(session({
+    secret:'XULIU',
+    resave:true,
+    saveUninitialized: true
+}))
 
 // 使用配置好的路由
 app.use('/', indexRouter);

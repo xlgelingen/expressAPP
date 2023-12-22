@@ -1,8 +1,10 @@
 {% extends './../layout.tpl' %}
 
+
 {% block css %}
 <link rel="stylesheet" href="/stylesheets/style.css">
 {% endblock %}
+
 
 {% block content %}
 <div class="page">
@@ -28,8 +30,15 @@
       {% endfor %}
     </ul>
   </div>
+
+  <!-- csrf token -->
+  <div class="csrf-contianer">
+    <input type='text' name='csrf' id='csrf' value={{csrf}} >
+  </div>
+
 </div>
 {% endblock %}
+
 
 {% block js %}
 <script src="https://lib.baomitu.com/jquery/3.3.1/jquery.min.js"></script>
@@ -45,10 +54,10 @@
     },
     delete: function(){
       let id = $(this).data('id');
-      
+      let csrf = $('#csrf').val();
       $.ajax({
           url: '/api/user',
-          data: { id },
+          data: { id, csrf },
           type: 'DELETE',
           success: function(data) {
             if(data.code === 200){
@@ -66,7 +75,7 @@
     update:function(){
       let id = $(this).data('id');
       let name = $(this).parent().find('.user-name').val();
-
+      let csrf = $('#csrf').val();
       if(!name || !id){
         alert('缺少参数')
         return
@@ -74,7 +83,7 @@
 
       $.ajax({
           url: '/api/user',
-          data: { name, id },
+          data: { name, id, csrf },
           type: 'PUT',
           success: function(data) {
             if(data.code === 200){
@@ -93,7 +102,7 @@
       let name = $('#new-name').val();
       let email = $('#new-email').val();
       let password = $('#new-password').val();
-
+      let csrf = $('#csrf').val();
       if(!name || !email || !password){
         alert('缺少参数')
         return
@@ -101,7 +110,7 @@
 
       $.ajax({
           url: '/api/user',
-          data: { name, email, password },
+          data: { name, email, password, csrf },
           type: 'POST',
           success: function(data) {
             if(data.code === 200){
