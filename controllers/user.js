@@ -6,6 +6,12 @@ const User = new UserModel();
 const userController = {
     // show 获取用户数据并返回到页面
     show: async function (req, res, next) {
+        // 如果用户没有登录，重定向到登录页面
+        if (!res.locals.isLogin) {
+            res.redirect('/login')
+            return
+        }
+
         try {
             // 从模型中获取所有用户数据
             const users = await User.all();
@@ -17,6 +23,9 @@ const userController = {
             res.locals.error = e;
             res.render('error', res.locals)
         }
+
+        console.log(res.locals);
+
     },
 
     // 新增用户 API

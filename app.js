@@ -20,6 +20,8 @@ var apiRouter = require('./routes/api');
 ////引入express-session模块
 var session = require('express-session');
 
+var filters = require('./filters/index')
+
 
 // Express 引用实例化
 var app = express();
@@ -64,8 +66,12 @@ app.use(session({
     saveUninitialized: true
 }))
 
+//过滤中间件需在cookie中间件引用之后，否则会出错。
+filters(app);
+
 // 使用配置好的路由
-app.use('/', indexRouter);
+//只有在对应路径下，才执行相应的回调函数
+app.use('/', indexRouter);//在‘/’路径下，执行indexRouter
 app.use('/api', apiRouter);
 
 // catch 404 and forward to error handler
