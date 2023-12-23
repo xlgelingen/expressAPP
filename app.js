@@ -22,6 +22,8 @@ var session = require('express-session');
 
 var filters = require('./filters/index')
 
+// 引入cors中间件
+const cors = require('./middlewares/cors.js'); 
 
 // Express 引用实例化
 var app = express();
@@ -69,6 +71,9 @@ app.use(session({
 //过滤中间件需在cookie中间件引用之后，否则会出错。
 filters(app);
 
+//使用cors中间件，在 use 路由之前
+app.use(cors.allowAll);  
+
 // 使用配置好的路由
 //只有在对应路径下，才执行相应的回调函数
 app.use('/', indexRouter);//在‘/’路径下，执行indexRouter
@@ -98,54 +103,60 @@ module.exports = app;
 
 
 
-// require('dotenv').config(); // 这里
+/* 
+require('dotenv').config(); // 这里
 
-// var createError = require('http-errors');
-// var express = require('express');
-// var path = require('path');
-// var cookieParser = require('cookie-parser');
-// var logger = require('morgan');
-// var nunjucks = require('nunjucks');
-// var favicon = require('serve-favicon');
-// var indexRouter = require('./routes/index');
-// var apiRouter = require('./routes/api');
-// var session = require('express-session');
-// var filters = require('./filters/index')
-// var app = express();
+var createError = require('http-errors');
+var express = require('express');
+var path = require('path');
+var cookieParser = require('cookie-parser');
+var logger = require('morgan');
+var nunjucks = require('nunjucks');
+var favicon = require('serve-favicon');
+var indexRouter = require('./routes/index');
+var apiRouter = require('./routes/api');
+var session = require('express-session');
+var filters = require('./filters/index')
+const cors = require('./middlewares/cors.js'); 
 
-// app.set('view engine', 'tpl');
-// nunjucks.configure('views', {
-//   autoescape: true,
-//   express: app,
-//   watch: true
-// });
+var app = express();
 
-// app.use(logger('dev'));
-// app.use(express.json());
-// app.use(express.urlencoded({ extended: false }));
-// app.use(cookieParser());
-// app.use(express.static(path.join(__dirname, 'public')));
-// app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-// app.use(session({
-//     secret:'XULIU',
-//     resave:true,
-//     saveUninitialized: true
-// }))
+app.set('view engine', 'tpl');
+nunjucks.configure('views', {
+  autoescape: true,
+  express: app,
+  watch: true
+});
 
-// filters(app);
+app.use(logger('dev'));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+app.use(session({
+    secret:'XULIU',
+    resave:true,
+    saveUninitialized: true
+}))
 
-// app.use('/', indexRouter);
-// app.use('/api', apiRouter);
+filters(app);
 
-// app.use(function(req, res, next) {
-//   next(createError(404));
-// });
+app.use(cors.allowAll); 
 
-// app.use(function(err, req, res, next) {
-//   res.locals.message = err.message;
-//   res.locals.error = req.app.get('env') === 'development' ? err : {};
-//   res.status(err.status || 500);
-//   res.render('error');
-// });
+app.use('/', indexRouter);
+app.use('/api', apiRouter);
 
-// module.exports = app;
+app.use(function(req, res, next) {
+  next(createError(404));
+});
+
+app.use(function(err, req, res, next) {
+  res.locals.message = err.message;
+  res.locals.error = req.app.get('env') === 'development' ? err : {};
+  res.status(err.status || 500);
+  res.render('error');
+});
+
+module.exports = app; 
+*/
