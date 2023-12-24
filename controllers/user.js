@@ -2,6 +2,7 @@
 const UserModel = require('./../models/user.js');
 const User = new UserModel();
 // const User = require('./../models/user.js');
+const xss = require('xss');
 
 const userController = {
     // show 获取用户数据并返回到页面
@@ -30,9 +31,10 @@ const userController = {
 
     // 新增用户 API
     insert: async function (req, res, next) {
-        let name = req.body.name;
-        let email = req.body.email;
-        let password = req.body.password;
+        //xss过滤
+        let name = xss(req.body.name);
+        let email = xss(req.body.email);
+        let password = xss(req.body.password);
         console.log(name, email, password);
         if (!name || !email || !password) {
             res.json({ code: 0, data: 'params empty!' });
@@ -50,7 +52,8 @@ const userController = {
     // 更新用户信息 API
     update: async function (req, res, next) {
         let id = req.body.id;
-        let name = req.body.name;
+        //xss过滤
+        let name = xss(req.body.name);
         console.log(id, name);
 
         if (!name || !id) {

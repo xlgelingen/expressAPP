@@ -23,7 +23,11 @@ var session = require('express-session');
 var filters = require('./filters/index')
 
 // 引入cors中间件
-const cors = require('./middlewares/cors.js'); 
+const cors = require('./middlewares/cors.js');
+
+//引入helmet包
+const helmet = require('helmet');
+
 
 // Express 引用实例化
 var app = express();
@@ -63,16 +67,28 @@ app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 
 ////Use the session middleware
 app.use(session({
-    secret:'XULIU',
-    resave:true,
-    saveUninitialized: true
+  secret: 'XULIU',
+  resave: true,
+  saveUninitialized: true,
+  // 设置 httpOnly 属性，禁止通过 JavaScript 访问此 cookie
+  httpOnly: true
 }))
 
 //过滤中间件需在cookie中间件引用之后，否则会出错。
 filters(app);
 
 //使用cors中间件，在 use 路由之前
-app.use(cors.allowAll);  
+app.use(cors.allowAll);
+
+//使用helmet
+app.use(
+  helmet.contentSecurityPolicy({
+    directives: {
+      scriptSrc: ["'self'", 'https://lib.baomitu.com'],
+      'script-src-elem': ["'self'", 'https://lib.baomitu.com']
+    }
+  })
+);
 
 // 使用配置好的路由
 //只有在对应路径下，才执行相应的回调函数
@@ -81,13 +97,13 @@ app.use('/api', apiRouter);
 
 // catch 404 and forward to error handler
 // 捕捉404错误
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   next(createError(404));
 });
 
 // error handler
 // 监听异常如果有，立刻返回异常
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   // 设置错误信息
   res.locals.message = err.message;
@@ -118,6 +134,7 @@ var apiRouter = require('./routes/api');
 var session = require('express-session');
 var filters = require('./filters/index')
 const cors = require('./middlewares/cors.js'); 
+const helmet = require('helmet');
 
 var app = express();
 
@@ -137,12 +154,14 @@ app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(session({
     secret:'XULIU',
     resave:true,
-    saveUninitialized: true
+    saveUninitialized: true,
+    httpOnly: true
 }))
 
 filters(app);
 
 app.use(cors.allowAll); 
+app.use(helmet());
 
 app.use('/', indexRouter);
 app.use('/api', apiRouter);

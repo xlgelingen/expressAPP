@@ -3,11 +3,14 @@ const User = new UserModel();
 const JWT = require("jsonwebtoken");
 const JWT_SECRET = process.env.JWT_SECRET;
 
+const xss = require('xss');
+
 const authController = {
     login: async function (req, res, next) {
         // 获取邮件密码参数
-        let email = req.body.email;
-        let password = req.body.password;
+        //xss过滤
+        let email = xss(req.body.email);
+        let password = xss(req.body.password);
         // 参数判断
         if (!email || !password) {
             res.json({ code: 0, data: 'params empty!' });
@@ -26,7 +29,7 @@ const authController = {
                     expiresIn: "30d"
                 });
                 // 加密放置在 cookie 中
-                res.cookie('web_token', token, { maxAge: 30 * 24 * 60 * 60 });
+                res.cookie('web_token', token, { maxAge: 30 * 24 * 60 * 60, httpOnly: true});
                 // 返回登录的信息
                 res.json({ code: 200, message: '登录成功！', data: { token: token } });
             } else {
