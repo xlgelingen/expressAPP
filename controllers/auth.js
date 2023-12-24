@@ -8,9 +8,8 @@ const xss = require('xss');
 const authController = {
     login: async function (req, res, next) {
         // 获取邮件密码参数
-        //xss过滤
-        let email = xss(req.body.email);
-        let password = xss(req.body.password);
+        let email = req.body.email;
+        let password = req.body.password;
         // 参数判断
         if (!email || !password) {
             res.json({ code: 0, data: 'params empty!' });

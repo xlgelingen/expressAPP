@@ -28,6 +28,9 @@ const cors = require('./middlewares/cors.js');
 //引入helmet包
 const helmet = require('helmet');
 
+//引入express-xss-sanitizer
+const { xss } = require('express-xss-sanitizer');
+
 
 // Express 引用实例化
 var app = express();
@@ -90,10 +93,13 @@ app.use(
   })
 );
 
-// 使用配置好的路由
-//只有在对应路径下，才执行相应的回调函数
+//使用xss()过滤，需要在use路由之前
+app.use(xss());
+
+// 使用配置好的路由，只有在对应路径下，才执行相应的回调函数
 app.use('/', indexRouter);//在‘/’路径下，执行indexRouter
 app.use('/api', apiRouter);
+
 
 // catch 404 and forward to error handler
 // 捕捉404错误
@@ -116,66 +122,3 @@ app.use(function (err, req, res, next) {
 });
 
 module.exports = app;
-
-
-
-/* 
-require('dotenv').config(); // 这里
-
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
-var nunjucks = require('nunjucks');
-var favicon = require('serve-favicon');
-var indexRouter = require('./routes/index');
-var apiRouter = require('./routes/api');
-var session = require('express-session');
-var filters = require('./filters/index')
-const cors = require('./middlewares/cors.js'); 
-const helmet = require('helmet');
-
-var app = express();
-
-app.set('view engine', 'tpl');
-nunjucks.configure('views', {
-  autoescape: true,
-  express: app,
-  watch: true
-});
-
-app.use(logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
-app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-app.use(session({
-    secret:'XULIU',
-    resave:true,
-    saveUninitialized: true,
-    httpOnly: true
-}))
-
-filters(app);
-
-app.use(cors.allowAll); 
-app.use(helmet());
-
-app.use('/', indexRouter);
-app.use('/api', apiRouter);
-
-app.use(function(req, res, next) {
-  next(createError(404));
-});
-
-app.use(function(err, req, res, next) {
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
-  res.status(err.status || 500);
-  res.render('error');
-});
-
-module.exports = app; 
-*/
